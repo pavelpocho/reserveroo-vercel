@@ -1,0 +1,196 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String             @id @default(uuid())
+  email                String             @unique
+  username             String             @unique
+  firstName            String
+  lastName             String
+  phone                String             @unique
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @default(now()) @updatedAt
+  passwordHash         String
+  admin                Boolean            @default(false)
+  verifiedEmail        Boolean            @default(false)
+  verifyEmailTriesLeft Int                @default(3)
+  searchHistory        Search[]
+  reservationGroups    ReservationGroup[]
+}
+
+model Search {
+  id         String     @id @default(uuid())
+  createdAt  DateTime   @default(now())
+  phrase     String
+  location   Location?  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  Categories Category[]
+  Tags       Tag[]
+  locationId String?
+  User       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
+}
+
+model Reservation {
+  id                 String            @id @default(uuid())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now()) @updatedAt
+  reservable         Reservable?       @relation(fields: [reservableId], references: [id], onDelete: Restrict)
+  reservableId       String?
+  reservationGroup   ReservationGroup? @relation(fields: [reservationGroupId], references: [id], onDelete: Cascade)
+  reservationGroupId String?
+  start              DateTime
+  end                DateTime
+  status             Int               @default(0)
+  previousStatus     Int               @default(0)
+  backup             Boolean           @default(false)
+}
+
+model ReservationGroup {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+  note         String
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+  userId       String?
+}
+
+model Reservable {
+  id                     String          @id @default(uuid())
+  name                   String
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @default(now()) @updatedAt
+  place                  Place?          @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  reservations           Reservation[]
+  reservableDaysAhead    Int             @default(30)
+  placeId                String?
+  minimumReservationTime Int             @default(30)
+  reservationsPerSlot    Int             @default(1)
+  ReservableType         ReservableType? @relation(fields: [reservableTypeId], references: [id], onDelete: Restrict)
+  reservableTypeId       String?
+}
+
+model ReservableType {
+  id              String            @id @default(uuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  multiLangName   MultilingualName? @relation(fields: [multiLangNameId], references: [id], onDelete: Restrict)
+  multiLangNameId String?
+  reservables     Reservable[]
+}
+
+model Place {
+  id             String        @id @default(uuid())
+  name           String        @unique
+  profilePicUrl  String?
+  galleryPicUrls String[]
+  description    String        @default("")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+  company        Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reservables    Reservable[]
+  companyId      String?
+  openingTimes   OpeningTime[]
+  tags           Tag[]
+  categories     Category[]
+  hidden         Boolean       @default(true)
+  Location       Location?     @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  locationId     String?
+  street         String?
+  city           String?
+  postCode       String?
+  howToGetThere  String?
+}
+
+model Tag {
+  id              String           @id @default(uuid())
+  multiLangName   MultilingualName @relation(fields: [multiLangNameId], references: [id], onDelete: Cascade)
+  multiLangDesc   MultilingualDesc @relation(fields: [multiLangDescId], references: [id], onDelete: Cascade)
+  multiLangNameId String
+  multiLangDescId String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now()) @updatedAt
+  places          Place[]
+  Search          Search[]
+  searchId        String?
+}
+
+model MultilingualName {
+  id             String           @id @default(uuid())
+  czech          String
+  english        String
+  Tag            Tag[]
+  Category       Category[]
+  Location       Location[]
+  ReservableType ReservableType[]
+}
+
+model MultilingualDesc {
+  id       String     @id @default(uuid())
+  czech    String
+  english  String
+  Tag      Tag[]
+  Location Location[]
+}
+
+model Category {
+  id                 String           @id @default(uuid())
+  multiLangName      MultilingualName @relation(fields: [multilingualNameId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now()) @updatedAt
+  places             Place[]
+  multilingualNameId String
+  Searches           Search[]
+  searchId           String?
+}
+
+model Location {
+  id                    String            @id @default(uuid())
+  multiLangCountry      MultilingualName? @relation(fields: [multilingualCountryId], references: [id], onDelete: Cascade)
+  multiLangCity         MultilingualDesc? @relation(fields: [multilingualCityId], references: [id], onDelete: Cascade)
+  places                Place[]
+  cityCountry           String            @unique
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @default(now()) @updatedAt
+  multilingualCountryId String?
+  multilingualCityId    String?
+  Search                Search[]
+}
+
+model OpeningTime {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  open      DateTime @db.Time()
+  close     DateTime @db.Time()
+  place     Place?   @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId   String?
+  day       Int
+}
+
+model Company {
+  id         String            @id @default(uuid())
+  name       String            @unique
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @default(now()) @updatedAt
+  identities CompanyIdentity[]
+  places     Place[]
+}
+
+model CompanyIdentity {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  passwordHash String
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId    String?
+}

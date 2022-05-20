@@ -1,0 +1,53 @@
+{
+  "name": "remix-template-vercel",
+  "private": true,
+  "description": "",
+  "license": "",
+  "sideEffects": false,
+  "scripts": {
+    "build": "remix build",
+    "dev": "remix dev",
+    "clean": "node clean.js",
+    "generate-prisma": "prisma generate",
+    "migrate-prisma": "prisma migrate dev",
+    "deploy": "npm run build && netlify deploy"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.87.0",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@netlify/functions": "^0.10.0",
+    "@prisma/client": "^3.13.0",
+    "@react-spring/parallax": "^9.4.5",
+    "@remix-run/netlify": "^1.4.3",
+    "@remix-run/node": "^1.4.3",
+    "@remix-run/react": "^1.4.3",
+    "aws-sdk": "^2.1134.0",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.14.39",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-google-login": "^5.2.2",
+    "react-icons": "^4.3.1",
+    "styled-components": "^5.3.5",
+    "tiny-invariant": "^1.2.0",
+    "ts-node": "^10.7.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^1.4.3",
+    "@remix-run/eslint-config": "^1.4.3",
+    "@types/bcrypt": "^5.0.0",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
+    "@types/styled-components": "^5.1.25",
+    "bcrypt": "^5.0.1",
+    "eslint": "^8.11.0",
+    "prisma": "^3.13.0",
+    "typescript": "^4.5.5"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "prisma": {
+    "seed": "ts-node --require tsconfig-paths/register prisma/seed.ts"
+  }
+}

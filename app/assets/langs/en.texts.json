@@ -1,0 +1,30 @@
+{
+  "name": "en",
+  "availability": {
+    "mostlyFree": "Mostly free",
+    "fairlyBusy": "Fairly busy"
+  },
+  "searchPlaceholder": "Search by name",
+  "loadingText": [
+    "Loading",
+    "Almost there",
+    "Crunching",
+    "Working",
+    "Just a second",
+    "Transporting"
+  ],
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ]
+}

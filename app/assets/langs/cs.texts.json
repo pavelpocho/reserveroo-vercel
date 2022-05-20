@@ -1,0 +1,30 @@
+{
+  "name": "cs",
+  "availability": {
+    "mostlyFree": "Poměrně prázdno",
+    "fairlyBusy": "Poměrně plno"
+  },
+  "searchPlaceholder": "Hledat podle jména",
+  "loadingText": [
+    "Načítání",
+    "Skoro tam",
+    "Zpracovávání",
+    "Děláme na tom",
+    "Vteřinu",
+    "Přesouváme"
+  ],
+  "months": [
+    "Leden",
+    "Únor",
+    "Březen",
+    "Duben",
+    "Květen",
+    "Červen",
+    "Červenec",
+    "Srpen",
+    "Září",
+    "Říjen",
+    "Listopad",
+    "Prosinec"
+  ]
+}
